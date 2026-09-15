@@ -2,7 +2,7 @@
 
 > **QA/SDET Portfolio Project** — A complete, production-style API testing framework demonstrating functional, negative, boundary, and auth testing with automated CI/CD.
 
-[![API Tests](https://github.com/your-username/rest-api-testing-framework/actions/workflows/api-tests.yml/badge.svg)](https://github.com/your-username/rest-api-testing-framework/actions/workflows/api-tests.yml)
+[![API Tests](https://github.com/Manvithagopireddy/TestingPro/actions/workflows/api-tests.yml/badge.svg)](https://github.com/Manvithagopireddy/TestingPro/actions/workflows/api-tests.yml)
 
 ---
 
@@ -23,7 +23,7 @@ This project demonstrates professional QA/SDET skills by building **both** the s
 | Layer | Technology |
 |-------|-----------|
 | **API Runtime** | Node.js 20 + Express 4 |
-| **Database** | SQLite via `better-sqlite3` (file-based, zero external setup) |
+| **Database** | SQLite via `sql.js` (file-persisted, pure WebAssembly, zero native compilation) |
 | **Authentication** | JSON Web Tokens (`jsonwebtoken`) |
 | **Test Runner** | Newman (Postman CLI) |
 | **Test Collection** | Postman Collection Format v2.1 |
@@ -273,7 +273,7 @@ After a CI run, navigate to:
 
 ## 🏗️ Design Decisions
 
-- **`better-sqlite3` over alternatives** — Synchronous API, zero native bindings issues, no external server, perfect for portfolio/CI use
+- **`sql.js` (WebAssembly SQLite)** — Zero native C++ build dependencies, 100% cross-platform (Windows/Linux/macOS CI), file-persisted on disk via `tasks.db`, zero external database setup required
 - **Hardcoded test credentials** — Intentional for a demo; the `src/config.js` is the single place to change them
 - **Seed before every run** — Ensures deterministic test results regardless of previous test runs
 - **`pm.collectionVariables.set` + `pm.environment.set`** — Dual-setting the auth token ensures it works both in desktop Postman and in Newman CLI
