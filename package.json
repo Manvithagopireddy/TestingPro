@@ -9,8 +9,11 @@
     "seed": "node scripts/seed.js",
     "newman": "node scripts/run-newman.js",
     "test": "npm run seed && npm run newman",
+    "test:jest": "jest --runInBand",
+    "test:coverage": "jest --coverage --runInBand",
     "test:verbose": "npm run seed && npm run newman -- --verbose",
     "test:ci": "npm run seed && npm run newman && node scripts/sql-validation.js",
+    "test:all": "npm run seed && npm run newman && npm run test:jest && node scripts/sql-validation.js",
     "validate:db": "node scripts/sql-validation.js"
   },
   "keywords": [
@@ -25,13 +28,15 @@
   "author": "QA Engineer",
   "license": "MIT",
   "dependencies": {
-    "sql.js": "^1.12.0",
     "express": "^4.18.2",
-    "jsonwebtoken": "^9.0.2"
+    "jsonwebtoken": "^9.0.2",
+    "sql.js": "^1.12.0"
   },
   "devDependencies": {
+    "jest": "^29.7.0",
     "newman": "^6.1.2",
     "newman-reporter-htmlextra": "^1.22.11",
-    "nodemon": "^3.0.3"
+    "nodemon": "^3.0.3",
+    "supertest": "^7.2.2"
   }
 }

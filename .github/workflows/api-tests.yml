@@ -59,15 +59,19 @@ jobs:
           # Final check — fail the step if server never responded
           curl --fail http://localhost:3000/health
 
-      # ── 8. Run Newman test suite ──────────────────────────────────────────────
+      # ── 8. Run Jest test suite & code coverage ────────────────────────────────
+      - name: Run Jest test suite & coverage
+        run: npm run test:coverage
+
+      # ── 9. Run Newman test suite ──────────────────────────────────────────────
       - name: Run Newman collection
         run: node scripts/run-newman.js
 
-      # ── 9. Run SQL validation script ──────────────────────────────────────────
+      # ── 10. Run SQL validation script ──────────────────────────────────────────
       - name: Run SQL validation
         run: node scripts/sql-validation.js
 
-      # ── 10. Upload HTML report as artifact ────────────────────────────────────
+      # ── 11. Upload HTML report as artifact ────────────────────────────────────
       - name: Upload test report
         if: always()   # upload even if tests fail, so we can investigate
         uses: actions/upload-artifact@v4
@@ -76,7 +80,7 @@ jobs:
           path: reports/test-report.html
           retention-days: 30
 
-      # ── 11. Stop API server ───────────────────────────────────────────────────
+      # ── 12. Stop API server ───────────────────────────────────────────────────
       - name: Stop API server
         if: always()
         run: |

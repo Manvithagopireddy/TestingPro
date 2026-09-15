@@ -25,8 +25,9 @@ This project demonstrates professional QA/SDET skills by building **both** the s
 | **API Runtime** | Node.js 20 + Express 4 |
 | **Database** | SQLite via `sql.js` (file-persisted, pure WebAssembly, zero native compilation) |
 | **Authentication** | JSON Web Tokens (`jsonwebtoken`) |
-| **Test Runner** | Newman (Postman CLI) |
+| **Collection Test Runner** | Newman (Postman CLI) |
 | **Test Collection** | Postman Collection Format v2.1 |
+| **Programmatic Test Suite** | Jest + Supertest (In-memory HTTP testing, ~94% code coverage) |
 | **HTML Reports** | `newman-reporter-htmlextra` |
 | **CI/CD** | GitHub Actions |
 
@@ -53,9 +54,17 @@ rest-api-testing-framework/
 │   ├── seed.js                    # Reset DB to known test data
 │   └── sql-validation.js          # Direct DB verification script
 ├── tests/
+│   ├── jest/                      # Programmatic integration test suite
+│   │   ├── helpers.js             # Test DB initialization & token helpers
+│   │   ├── auth.test.js           # Auth & health test specifications
+│   │   ├── tasks.crud.test.js     # CRUD lifecycle & persistence tests
+│   │   ├── validation.test.js     # 400 validation & boundary tests
+│   │   └── security.test.js       # JWT guards & SQLi resilience tests
 │   ├── TaskManagerAPI.postman_collection.json   # Full Postman collection
 │   └── TaskManager.postman_environment.json     # Environment variables
 ├── reports/                       # Newman HTML reports (gitignored)
+├── coverage/                      # Jest code coverage reports (gitignored)
+├── jest.config.js                 # Jest test runner configuration
 ├── .gitignore
 ├── package.json
 └── README.md
@@ -265,9 +274,12 @@ After a CI run, navigate to:
 | `npm start` | `node src/server.js` | Start the API server |
 | `npm run dev` | `nodemon src/server.js` | Start with auto-reload |
 | `npm run seed` | `node scripts/seed.js` | Reset DB to seed data |
-| `npm test` | seed + Newman | Run full test suite |
-| `npm run test:ci` | seed + Newman + SQL | Full CI test run |
-| `npm run validate:db` | `node scripts/sql-validation.js` | SQL validation only |
+| `npm test` | seed + Newman | Run full Postman/Newman test suite (107 assertions) |
+| `npm run test:jest` | `jest --runInBand` | Run Jest + Supertest test suite (37 tests) |
+| `npm run test:coverage` | `jest --coverage --runInBand` | Run Jest tests and generate code coverage report |
+| `npm run test:ci` | seed + Newman + SQL | Full Postman CI test run |
+| `npm run test:all` | seed + Newman + Jest + SQL | Run all test layers end-to-end |
+| `npm run validate:db` | `node scripts/sql-validation.js` | Direct SQL validation against database |
 
 ---
 
