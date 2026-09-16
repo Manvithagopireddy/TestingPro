@@ -28,7 +28,9 @@ This project demonstrates professional QA/SDET skills by building **both** the s
 | **Collection Test Runner** | Newman (Postman CLI) |
 | **Test Collection** | Postman Collection Format v2.1 |
 | **Programmatic Test Suite** | Jest + Supertest (In-memory HTTP testing, ~94% code coverage) |
-| **HTML Reports** | `newman-reporter-htmlextra` |
+| **BDD Specification Framework** | Cucumber.js (Executable Gherkin specifications, tag filtering) |
+| **Manual QA & Living Specs** | Structured Gherkin Scenarios + Manual QA Test Matrix |
+| **HTML Reports** | `newman-reporter-htmlextra` & Cucumber Built-in HTML Reporter |
 | **CI/CD** | GitHub Actions |
 
 ---
@@ -54,6 +56,17 @@ rest-api-testing-framework/
 │   ├── seed.js                    # Reset DB to known test data
 │   └── sql-validation.js          # Direct DB verification script
 ├── tests/
+│   ├── cucumber/                  # BDD Cucumber test suite
+│   │   ├── features/              # Executable Gherkin specifications (.feature)
+│   │   │   ├── auth.feature       # @functional @regression @smoke @auth
+│   │   │   ├── tasks_crud.feature # @functional @regression @smoke @crud
+│   │   │   ├── tasks_validation.feature # @functional @regression @negative
+│   │   │   ├── security.feature   # @regression @security
+│   │   │   └── manual_scenarios.feature # @manual living specifications
+│   │   ├── step_definitions/      # Step implementation mapping Gherkin to API calls
+│   │   └── support/               # World context and clean test DB hooks
+│   ├── manual/
+│   │   └── MANUAL_TEST_SUITE.md   # Comprehensive QA Manual Matrix & Checklists
 │   ├── jest/                      # Programmatic integration test suite
 │   │   ├── helpers.js             # Test DB initialization & token helpers
 │   │   ├── auth.test.js           # Auth & health test specifications
@@ -62,8 +75,9 @@ rest-api-testing-framework/
 │   │   └── security.test.js       # JWT guards & SQLi resilience tests
 │   ├── TaskManagerAPI.postman_collection.json   # Full Postman collection
 │   └── TaskManager.postman_environment.json     # Environment variables
-├── reports/                       # Newman HTML reports (gitignored)
+├── reports/                       # Newman & Cucumber HTML reports (gitignored)
 ├── coverage/                      # Jest code coverage reports (gitignored)
+├── cucumber.json                  # Cucumber profile configuration
 ├── jest.config.js                 # Jest test runner configuration
 ├── .gitignore
 ├── package.json
@@ -277,9 +291,61 @@ After a CI run, navigate to:
 | `npm test` | seed + Newman | Run full Postman/Newman test suite (107 assertions) |
 | `npm run test:jest` | `jest --runInBand` | Run Jest + Supertest test suite (37 tests) |
 | `npm run test:coverage` | `jest --coverage --runInBand` | Run Jest tests and generate code coverage report |
+| `npm run test:cucumber` | `cucumber-js` | Run all automated Cucumber BDD scenarios (32 scenarios) |
+| `npm run test:cucumber:functional` | `cucumber-js --tags "@functional..."` | Run only functional BDD scenarios (25 scenarios) |
+| `npm run test:cucumber:regression` | `cucumber-js --tags "@regression..."` | Run full automated BDD regression suite (32 scenarios) |
+| `npm run test:cucumber:smoke` | `cucumber-js --tags "@smoke..."` | Run fast sanity/smoke BDD checks (4 scenarios) |
+| `npm run test:cucumber:manual` | `cucumber-js --tags "@manual" --dry-run` | Inspect all manual & exploratory Gherkin scenarios |
+| `npm run test:cucumber:html` | `cucumber-js --format html:...` | Run BDD suite and generate standalone HTML report |
 | `npm run test:ci` | seed + Newman + SQL | Full Postman CI test run |
-| `npm run test:all` | seed + Newman + Jest + SQL | Run all test layers end-to-end |
+| `npm run test:all` | seed + Newman + Jest + Cucumber + SQL | Run all test layers end-to-end |
 | `npm run validate:db` | `node scripts/sql-validation.js` | Direct SQL validation against database |
+
+---
+
+## 🥒 BDD & Cucumber: Functional, Regression & Manual Testing
+
+This framework integrates Behavior-Driven Development (BDD) via Cucumber.js to bridge business requirements, automated execution, and manual QA workflows:
+
+```gherkin
+@functional @regression @crud
+Scenario: Create a new task with default pending status
+  Given I am authenticated with valid credentials
+  When I send a POST request to "/tasks" with:
+    | title       | Implement BDD Feature Files |
+    | description | Write Gherkin tests for API |
+  Then the response status code should be 201
+  And the response body should contain the created task
+  And the created task status should be "pending"
+```
+
+### 1. Functional Testing (`@functional`)
+Validates individual user stories, API contracts, status transitions, boundary rules, and error handling across endpoints. Run with:
+```bash
+npm run test:cucumber:functional
+```
+
+### 2. Regression Testing (`@regression`)
+Executes the full suite of automated scenarios across auth, CRUD, validation, and security layers to verify that new code additions do not break existing functionality. Run with:
+```bash
+npm run test:cucumber:regression
+```
+
+### 3. Manual Testing (`@manual` & Manual QA Matrix)
+- **Living Documentation:** Gherkin scenarios serve as clear, non-technical test procedures for manual testers.
+- **Manual QA Matrix:** Check out [`tests/manual/MANUAL_TEST_SUITE.md`](file:///c:/TestingPro/tests/manual/MANUAL_TEST_SUITE.md) for a complete QA matrix featuring Test Case IDs (`TC-AUTH-001` through `TC-SEC-005`), preconditions, steps, test data, and pass/fail checklists.
+- **Dry-Run Inspection:** Review manual test scenarios via CLI:
+```bash
+npm run test:cucumber:manual
+```
+
+### 4. Standalone HTML Reporting
+Generate an interactive, rich HTML test execution report:
+```bash
+npm run test:cucumber:html
+```
+Report saved to: `reports/cucumber-report.html`.
+
 
 ---
 

@@ -63,6 +63,10 @@ jobs:
       - name: Run Jest test suite & coverage
         run: npm run test:coverage
 
+      # ── 8b. Run Cucumber BDD test suite ───────────────────────────────────────
+      - name: Run Cucumber BDD suite
+        run: npm run test:cucumber:html
+
       # ── 9. Run Newman test suite ──────────────────────────────────────────────
       - name: Run Newman collection
         run: node scripts/run-newman.js
@@ -71,13 +75,15 @@ jobs:
       - name: Run SQL validation
         run: node scripts/sql-validation.js
 
-      # ── 11. Upload HTML report as artifact ────────────────────────────────────
-      - name: Upload test report
+      # ── 11. Upload HTML reports as artifacts ──────────────────────────────────
+      - name: Upload test reports
         if: always()   # upload even if tests fail, so we can investigate
         uses: actions/upload-artifact@v4
         with:
-          name: newman-html-report
-          path: reports/test-report.html
+          name: test-reports
+          path: |
+            reports/test-report.html
+            reports/cucumber-report.html
           retention-days: 30
 
       # ── 12. Stop API server ───────────────────────────────────────────────────
