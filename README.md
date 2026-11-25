@@ -11,7 +11,7 @@
 This project demonstrates professional QA/SDET skills by building **both** the system under test and a comprehensive test suite around it:
 
 - **Part 1** — A real Node.js REST API (Task Manager) with JWT auth, input validation, and SQLite persistence
-- **Part 2** — A Postman collection with 60+ test assertions across 4 test categories
+- **Part 2** — A Postman collection with test assertions across 4 test categories
 - **Part 3** — A SQL validation script that directly queries the database to independently verify API operations
 - **Part 4** — A GitHub Actions CI pipeline that runs the full suite on every push
 - **Part 5** — This documentation
@@ -27,7 +27,7 @@ This project demonstrates professional QA/SDET skills by building **both** the s
 | **Authentication** | JSON Web Tokens (`jsonwebtoken`) |
 | **Collection Test Runner** | Newman (Postman CLI) |
 | **Test Collection** | Postman Collection Format v2.1 |
-| **Programmatic Test Suite** | Jest + Supertest (In-memory HTTP testing, ~94% code coverage) |
+| **Programmatic Test Suite** | Jest + Supertest (In-memory HTTP testing, coverage reporting) |
 | **BDD Specification Framework** | Cucumber.js (Executable Gherkin specifications, tag filtering) |
 | **Manual QA & Living Specs** | Structured Gherkin Scenarios + Manual QA Test Matrix |
 | **HTML Reports** | `newman-reporter-htmlextra` & Cucumber Built-in HTML Reporter |
@@ -362,3 +362,7 @@ Report saved to: `reports/cucumber-report.html`.
 ## 📝 License
 
 MIT — free to use as a portfolio reference or starting point.
+
+## Reviewing test evidence
+
+Use the linked GitHub Actions workflow for current execution status. Reproduce the documented suites locally and inspect generated reports; historical coverage or assertion counts are not guarantees of current results.
