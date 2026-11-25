@@ -1,8 +1,28 @@
 # REST API Testing & Validation Framework
 
-> **QA/SDET Portfolio Project** — A local demonstration API testing framework demonstrating functional, negative, boundary, and auth testing with automated CI/CD.
+> **QA/SDET Portfolio Project** — A local Task Manager API and automated quality engineering framework demonstrating functional, negative, boundary, and auth testing with automated CI/CD.
 
 [![API Tests](https://github.com/Manvithagopireddy/TestingPro/actions/workflows/api-tests.yml/badge.svg)](https://github.com/Manvithagopireddy/TestingPro/actions/workflows/api-tests.yml)
+
+---
+
+## Verified engineering evidence (25 November 2026)
+
+| Verification | Recorded result | Evidence |
+|---|---|---|
+| Jest | **50/50 passed**; 5 suites | [CI run](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45643148215) |
+| Coverage | **93.78% statements**, 87.87% branches, 100% functions | [Coverage artifact](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45643148215) |
+| Newman | **107/107 assertions** over 26 requests | [CI run](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45643148215) |
+| Playwright API | **4/4 passed** | [Advanced CI](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45643944497) |
+| k6 local smoke | **160/160 checks**, p95 1.56 ms with 2 users | [Advanced CI](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45643944497) |
+| Static security | CodeQL analysis and Gitleaks jobs completed successfully | [CodeQL](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45643944369) |
+| Dependency audit | **2 runtime; 30 total advisories — unresolved** | [Security findings](docs/SECURITY_AUDIT.md) |
+
+> Results are historical evidence for the linked commits. Success in functional tests or static analysis does not certify this demo for production.
+
+**Engineering artifacts:** [Case study](docs/CASE_STUDY.md) · [Architecture and QA guide](docs/QUALITY_GUIDE.md) · [OpenAPI specification](docs/openapi.yaml) · [CI evidence](docs/CI_EVIDENCE.md) · [Security audit](docs/SECURITY_AUDIT.md)
+
+**Additional validation:** [Playwright API tests](tests/playwright/api.spec.js) · [k6 smoke test](performance/smoke.js) · [Docker local setup](docker-compose.yml)
 
 ---
 
@@ -223,8 +243,8 @@ After a CI run, navigate to:
 
 | Metric | Count |
 |--------|------:|
-| Total requests | 22 |
-| Total test assertions | 65+ |
+| Total requests | 26 (verified CI run) |
+| Total test assertions | 107 (verified CI run) |
 | Test folders | 4 |
 | SQL validation checks | 18 |
 
