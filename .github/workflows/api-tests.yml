@@ -77,7 +77,7 @@ jobs:
       # ── 11. Upload HTML reports as artifacts ──────────────────────────────────
       - name: Upload test reports
         if: always()   # upload even if tests fail, so we can investigate
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: test-reports
           path: |

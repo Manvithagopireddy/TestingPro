@@ -35,7 +35,7 @@ jobs:
           npm audit --omit=dev --json --audit-level=high > reports/npm-audit-runtime.json
       - name: Publish raw audit evidence
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: dependency-audit-json
           path: reports/npm-audit-*.json

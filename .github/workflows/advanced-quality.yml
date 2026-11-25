@@ -52,7 +52,7 @@ jobs:
         run: node scripts/capture-report-screenshots.js
       - name: Upload verified report screenshots
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: real-ci-report-screenshots
           path: reports/screenshots/
@@ -60,7 +60,7 @@ jobs:
           retention-days: 30
       - name: Upload Playwright report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: playwright-api-report
           path: reports/playwright-html/
@@ -101,7 +101,7 @@ jobs:
         run: k6 run --summary-export=reports/k6-summary.json performance/smoke.js
       - name: Upload measured k6 results
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: k6-smoke-results
           path: reports/k6-summary.json
