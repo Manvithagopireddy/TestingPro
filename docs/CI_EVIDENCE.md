@@ -17,3 +17,7 @@ The numbers below come from completed GitHub Actions jobs on **25 November 2026*
 The original HTML Newman/Cucumber reports and Jest coverage are available from the `test-reports` artifact in the first run. Advanced Playwright/k6 results are available from `playwright-api-report` and `k6-smoke-results` artifacts in the second. **Real report screenshots have been generated and uploaded:** download the `real-ci-report-screenshots` artifact from [Advanced API Quality run 45644309050](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45644309050). It contains authentic screenshots of the Jest Istanbul coverage HTML and Playwright HTML reports, rendered during that same CI run.
 
 The k6 result reflects a small two-VU local smoke test, not a production load claim.
+
+## Dependency remediation evidence
+
+[Verified npm lockfile regeneration and audits](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45646931725): **0 runtime, 0 full-tree advisories** after replacing the vulnerable Newman reporter toolchain. The table above preserves historical Newman statistics and the earlier failed npm audit for transparency; those older numbers should not be interpreted as current dependency state.
