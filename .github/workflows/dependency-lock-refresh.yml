@@ -1,4 +1,5 @@
 name: One-time Secure Dependency Lockfile Regeneration
+# Second run removes vulnerable Jest 30 and nodemon transitive dependencies.
 
 on:
   push:
