@@ -38,7 +38,7 @@
   "author": "Gopireddy Manvitha",
   "license": "MIT",
   "dependencies": {
-    "express": "^4.18.2",
+    "express": "^5.3.0",
     "jsonwebtoken": "^9.0.2",
     "sql.js": "^1.12.0"
   },
