@@ -14,6 +14,6 @@ The numbers below come from completed GitHub Actions jobs on **25 November 2026*
 | Gitleaks | Git-history scanning job succeeded | [Security scan](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45643944511) |
 | npm audit | 2 runtime and 30 total dependency advisories | [Security audit](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45643944511) |
 
-The original HTML Newman/Cucumber reports and Jest coverage are available from the `test-reports` artifact in the first run. Advanced Playwright/k6 results are available from `playwright-api-report` and `k6-smoke-results` artifacts in the second. A separate workflow step also generates **real browser screenshots of the actual CI-rendered reports** in a `real-ci-report-screenshots` artifact once that updated run succeeds; these screenshots must not be fabricated.
+The original HTML Newman/Cucumber reports and Jest coverage are available from the `test-reports` artifact in the first run. Advanced Playwright/k6 results are available from `playwright-api-report` and `k6-smoke-results` artifacts in the second. **Real report screenshots have been generated and uploaded:** download the `real-ci-report-screenshots` artifact from [Advanced API Quality run 45644309050](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45644309050). It contains authentic screenshots of the Jest Istanbul coverage HTML and Playwright HTML reports, rendered during that same CI run.
 
 The k6 result reflects a small two-VU local smoke test, not a production load claim.
