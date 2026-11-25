@@ -44,8 +44,22 @@ jobs:
           done
           cat /tmp/testingpro-api.log
           exit 1
+      - name: Generate actual Jest coverage report
+        run: npm run test:coverage
       - name: Run Playwright HTTP API tests
         run: npx playwright test --config=playwright.config.cjs
+      - name: Install Chromium for report screenshots
+        run: npx playwright install --with-deps chromium
+      - name: Screenshot actual generated HTML reports
+        run: node scripts/capture-report-screenshots.js
+      - name: Upload verified report screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-ci-report-screenshots
+          path: reports/screenshots/
+          if-no-files-found: warn
+          retention-days: 30
       - name: Upload Playwright report
         if: always()
         uses: actions/upload-artifact@v4
