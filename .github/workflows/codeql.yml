@@ -1,0 +1,27 @@
+name: CodeQL Static Security Analysis
+
+on:
+  push:
+    branches: [main, "quality/**"]
+  pull_request:
+    branches: [main]
+  schedule:
+    - cron: '14 3 * * 1'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+  security-events: write
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - uses: github/codeql-action/init@v4
+        with:
+          languages: javascript-typescript
+          queries: security-and-quality
+      - uses: github/codeql-action/analyze@v4
