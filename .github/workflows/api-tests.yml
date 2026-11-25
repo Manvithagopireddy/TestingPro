@@ -22,10 +22,10 @@ jobs:
         uses: actions/checkout@v4
 
       # ── 2. Node.js setup ─────────────────────────────────────────────────────
-      - name: Set up Node.js 20
+      - name: Set up Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: '20'
+          node-version: '22'
           cache: 'npm'
 
       # ── 3. Install dependencies ───────────────────────────────────────────────
@@ -70,11 +70,7 @@ jobs:
       - name: Run Cucumber BDD suite
         run: npm run test:cucumber:html
 
-      # ── 9. Run Newman test suite ──────────────────────────────────────────────
-      - name: Run Newman collection
-        run: node scripts/run-newman.js
-
-      # ── 10. Run SQL validation script ──────────────────────────────────────────
+      # ── 9. Run SQL validation script ──────────────────────────────────────────
       - name: Run SQL validation
         run: node scripts/sql-validation.js
 
@@ -85,7 +81,6 @@ jobs:
         with:
           name: test-reports
           path: |
-            reports/test-report.html
             reports/cucumber-report.html
             coverage/
           retention-days: 30

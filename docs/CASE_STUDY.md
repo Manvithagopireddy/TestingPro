@@ -1,7 +1,7 @@
 # TestingPro — Engineering case study
 
 **Type:** personal QA/SDET portfolio case study  
-**Technology:** Node.js, Express, SQLite (sql.js), JWT, Jest, Supertest, Newman, Cucumber, GitHub Actions
+**Technology:** Node.js, Express, SQLite (sql.js), JWT, Jest, Supertest, Playwright, Cucumber, GitHub Actions
 
 ## Engineering problem
 
@@ -17,12 +17,12 @@ flowchart LR
   R --> D[(SQLite via sql.js)]
   J[Jest + Supertest] --> E
   P[Playwright API tests] --> E
-  N[Newman] --> E
+  P[Playwright API] --> E
   B[Cucumber] --> E
   S[SQL validator] --> D
   G[GitHub Actions] --> J
   G --> P
-  G --> N
+  G --> P
   G --> B
   G --> S
 ```
@@ -53,9 +53,9 @@ flowchart LR
 
 These measurements describe that CI revision, **not** future branches or the extended-quality changes until they pass. Download the actual HTML reports and coverage files from the **test-reports** artifact for that run.
 
-## Dependency security findings
+## Historical dependency security findings
 
-The same successful CI installation logged **30 npm advisories: 15 moderate, 14 high and 1 critical**. Passing functional tests does not mean dependency security is satisfactory. Dependency remediation and a fresh audit are required; the dedicated security workflow captures auditable JSON results.
+The original successful CI installation logged **30 npm advisories**, which have now been addressed in the [remediation workflow](https://github.com/Manvithagopireddy/TestingPro/actions/runs/45646931725): **0 runtime and 0 full-tree advisories**. Historical Newman results remain documented, but the vulnerable runner has been removed.
 
 ## Running locally
 

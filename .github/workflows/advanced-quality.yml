@@ -24,12 +24,10 @@ jobs:
           cache: npm
       - name: Install locked application dependencies
         run: npm ci
-      - name: Install pinned optional QA tooling
-        run: npm install --no-save --package-lock=false @playwright/test@1.65.1 eslint@10.15.0 prettier@3.6.2
       - name: Run ESLint quality rules
-        run: npx eslint src tests/playwright
+        run: npm run lint
       - name: Validate formatting configuration
-        run: npx prettier --check .prettierrc.json
+        run: npm run format:check
       - name: Seed synthetic database
         run: npm run seed
       - name: Start local API
@@ -47,7 +45,7 @@ jobs:
       - name: Generate actual Jest coverage report
         run: npm run test:coverage
       - name: Run Playwright HTTP API tests
-        run: npx playwright test --config=playwright.config.cjs
+        run: npm run test:playwright
       - name: Install Chromium for report screenshots
         run: npx playwright install --with-deps chromium
       - name: Screenshot actual generated HTML reports
