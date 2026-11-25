@@ -7,6 +7,9 @@ on:
     branches: [main]
   workflow_dispatch:   # allow manual runs from GitHub Actions UI
 
+permissions:
+  contents: read
+
 jobs:
   api-tests:
     name: Run API Test Suite
@@ -46,7 +49,7 @@ jobs:
       # ── 7. Wait for server to be ready ───────────────────────────────────────
       - name: Wait for server to be healthy
         run: |
-          echo "Waiting for API server on http://localhost:3000/health ..."
+          echo "Waiting for API server on http://127.0.0.1:3000/health ..."
           for i in $(seq 1 30); do
             STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:3000/health || true)
             if [ "$STATUS" = "200" ]; then
@@ -84,6 +87,7 @@ jobs:
           path: |
             reports/test-report.html
             reports/cucumber-report.html
+            coverage/
           retention-days: 30
 
       # ── 12. Stop API server ───────────────────────────────────────────────────
