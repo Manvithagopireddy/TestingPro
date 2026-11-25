@@ -97,14 +97,13 @@ describe('Security, Auth Guard & Resilience Testing (Jest + Supertest)', () => {
       expect(res.body.message).toBe('"id" must be a positive integer.');
     });
 
-    it('should safely treat parameterized numeric SQL injection strings without executing syntax', async () => {
-      // In JS, parseInt("1' OR '1'='1", 10) evaluates to 1, and parameterized query binds safely to row 1
+    it('should reject numeric IDs with trailing SQL syntax', async () => {
       const res = await request(app)
         .get("/tasks/1' OR '1'='1")
         .set('Authorization', `Bearer ${authToken}`);
 
-      expect(res.status).toBe(200);
-      expect(res.body.task.id).toBe(1);
+      expect(res.status).toBe(400);
+      expect(res.body.error).toBe('Bad Request');
     });
   });
 
