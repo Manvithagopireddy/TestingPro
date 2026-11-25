@@ -6,6 +6,7 @@
 npm ci
 npm run seed
 npm run test:coverage
+npm run security:audit
 ```
 
 The existing CI runs Jest, Cucumber, Newman and SQLite validation.
