@@ -6,6 +6,7 @@ const authRouter = require('./routes/auth');
 const tasksRouter = require('./routes/tasks');
 
 const app = express();
+app.disable('x-powered-by');
 
 // ── Global Middleware ─────────────────────────────────────────────────────────
 app.use(express.json());
@@ -33,7 +34,7 @@ app.use((err, req, res, _next) => {
   console.error('[ERROR]', err);
   res.status(500).json({
     error: 'Internal Server Error',
-    message: err.message || 'An unexpected error occurred.',
+    message: 'An unexpected error occurred.',
   });
 });
 
