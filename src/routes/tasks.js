@@ -12,12 +12,16 @@ const VALID_STATUSES = ['pending', 'completed'];
 function validateTaskPayload(body, requireTitle = true) {
   const errors = [];
 
-  if (requireTitle && (!body.title || typeof body.title !== 'string' || body.title.trim() === '')) {
+  if ((requireTitle || body.title !== undefined) && (typeof body.title !== 'string' || body.title.trim() === '')) {
     errors.push('"title" is required and must be a non-empty string.');
   }
 
   if (body.title !== undefined && typeof body.title === 'string' && body.title.trim().length > 500) {
     errors.push('"title" must not exceed 500 characters.');
+  }
+
+  if (body.description !== undefined && typeof body.description !== 'string') {
+    errors.push('"description" must be a string.');
   }
 
   if (body.status !== undefined && !VALID_STATUSES.includes(body.status)) {
@@ -47,7 +51,7 @@ router.post('/', (req, res) => {
     const task = db.queryOne('SELECT * FROM tasks WHERE id = ?', [result.lastInsertRowid]);
     return res.status(201).json({ message: 'Task created successfully.', task });
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    return res.status(500).json({ error: 'Internal Server Error', message: 'An unexpected error occurred.' });
   }
 });
 
@@ -58,16 +62,16 @@ router.get('/', (req, res) => {
     const tasks = db.query('SELECT * FROM tasks ORDER BY id ASC');
     return res.status(200).json({ count: tasks.length, tasks });
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    return res.status(500).json({ error: 'Internal Server Error', message: 'An unexpected error occurred.' });
   }
 });
 
 // ── GET /tasks/:id ────────────────────────────────────────────────────────────
 
 router.get('/:id', (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = /^\d+$/.test(req.params.id) ? Number(req.params.id) : NaN;
 
-  if (isNaN(id) || id <= 0) {
+  if (!Number.isSafeInteger(id) || id <= 0) {
     return res.status(400).json({ error: 'Bad Request', message: '"id" must be a positive integer.' });
   }
 
@@ -78,16 +82,16 @@ router.get('/:id', (req, res) => {
     }
     return res.status(200).json({ task });
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    return res.status(500).json({ error: 'Internal Server Error', message: 'An unexpected error occurred.' });
   }
 });
 
 // ── PUT /tasks/:id ────────────────────────────────────────────────────────────
 
 router.put('/:id', (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = /^\d+$/.test(req.params.id) ? Number(req.params.id) : NaN;
 
-  if (isNaN(id) || id <= 0) {
+  if (!Number.isSafeInteger(id) || id <= 0) {
     return res.status(400).json({ error: 'Bad Request', message: '"id" must be a positive integer.' });
   }
 
@@ -116,16 +120,16 @@ router.put('/:id', (req, res) => {
     const updatedTask = db.queryOne('SELECT * FROM tasks WHERE id = ?', [id]);
     return res.status(200).json({ message: 'Task updated successfully.', task: updatedTask });
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    return res.status(500).json({ error: 'Internal Server Error', message: 'An unexpected error occurred.' });
   }
 });
 
 // ── DELETE /tasks/:id ─────────────────────────────────────────────────────────
 
 router.delete('/:id', (req, res) => {
-  const id = parseInt(req.params.id, 10);
+  const id = /^\d+$/.test(req.params.id) ? Number(req.params.id) : NaN;
 
-  if (isNaN(id) || id <= 0) {
+  if (!Number.isSafeInteger(id) || id <= 0) {
     return res.status(400).json({ error: 'Bad Request', message: '"id" must be a positive integer.' });
   }
 
@@ -138,7 +142,7 @@ router.delete('/:id', (req, res) => {
     db.run('DELETE FROM tasks WHERE id = ?', [id]);
     return res.status(200).json({ message: `Task with id ${id} deleted successfully.`, deletedTask: existing });
   } catch (err) {
-    return res.status(500).json({ error: 'Internal Server Error', message: err.message });
+    return res.status(500).json({ error: 'Internal Server Error', message: 'An unexpected error occurred.' });
   }
 });
 
