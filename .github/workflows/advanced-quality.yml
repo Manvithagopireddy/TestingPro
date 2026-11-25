@@ -112,3 +112,28 @@ jobs:
         if: always()
         run: |
           if [ -n "${SERVER_PID:-}" ]; then kill "$SERVER_PID" || true; fi
+
+  docker-and-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate OpenAPI contract
+        run: npx --yes @apidevtools/swagger-cli@4.0.4 validate docs/openapi.yaml
+      - name: Build local-only Docker demo image
+        run: docker build -t testingpro:ci .
+      - name: Verify container health through loopback
+        run: |
+          docker run -d --name testingpro-verification -p 127.0.0.1:3007:3000 testingpro:ci
+          for i in $(seq 1 30); do
+            if curl --silent --fail http://127.0.0.1:3007/health > /dev/null; then
+              echo "Container API healthy"
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs testingpro-verification
+          exit 1
+      - name: Clean up verification container
+        if: always()
+        run: docker rm -f testingpro-verification || true
