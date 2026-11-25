@@ -1,6 +1,6 @@
 # REST API Testing & Validation Framework
 
-> **QA/SDET Portfolio Project** — A complete, production-style API testing framework demonstrating functional, negative, boundary, and auth testing with automated CI/CD.
+> **QA/SDET Portfolio Project** — A local demonstration API testing framework demonstrating functional, negative, boundary, and auth testing with automated CI/CD.
 
 [![API Tests](https://github.com/Manvithagopireddy/TestingPro/actions/workflows/api-tests.yml/badge.svg)](https://github.com/Manvithagopireddy/TestingPro/actions/workflows/api-tests.yml)
 
@@ -96,11 +96,11 @@ rest-api-testing-framework/
 
 ```bash
 # 1. Clone the repository
-git clone https://github.com/your-username/rest-api-testing-framework.git
-cd rest-api-testing-framework
+git clone https://github.com/Manvithagopireddy/TestingPro.git
+cd TestingPro
 
 # 2. Install all dependencies
-npm install
+npm ci
 
 # 3. Seed the database with known test data
 npm run seed
@@ -159,7 +159,7 @@ curl http://localhost:3000/tasks \
 
 ```bash
 # Install dependencies (includes Newman)
-npm install
+npm ci
 
 # Seed the DB, run the full collection, generate HTML report
 npm test
@@ -366,3 +366,7 @@ MIT — free to use as a portfolio reference or starting point.
 ## Reviewing test evidence
 
 Use the linked GitHub Actions workflow for current execution status. Reproduce the documented suites locally and inspect generated reports; historical coverage or assertion counts are not guarantees of current results.
+
+## Quality gates and deployment scope
+
+Jest enforces minimum coverage of 80% for statements, functions and lines, and 75% for branches. CI uploads coverage alongside HTML reports. The demo API binds to loopback by default and is intentionally not a production authentication service. Latest results are available in [Actions](https://github.com/Manvithagopireddy/TestingPro/actions).
