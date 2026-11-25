@@ -9,8 +9,8 @@ const app = express();
 app.disable('x-powered-by');
 
 // ── Global Middleware ─────────────────────────────────────────────────────────
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ limit: '100kb' }));
+app.use(express.urlencoded({ extended: true, limit: '100kb' }));
 
 // Health check (public, no auth)
 app.get('/health', (req, res) => {
@@ -31,7 +31,13 @@ app.use((req, res) => {
 
 // ── Global error handler ──────────────────────────────────────────────────────
 app.use((err, req, res, _next) => {
-  console.error('[ERROR]', err);
+  if (err.type === 'entity.parse.failed') {
+    return res.status(400).json({ error: 'Bad Request', message: 'Malformed JSON.' });
+  }
+  if (err.type === 'entity.too.large') {
+    return res.status(413).json({ error: 'Payload Too Large', message: 'Request body exceeds the limit.' });
+  }
+  console.error('[ERROR]', err.name);
   res.status(500).json({
     error: 'Internal Server Error',
     message: 'An unexpected error occurred.',
