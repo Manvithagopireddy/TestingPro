@@ -1,0 +1,221 @@
+openapi: 3.0.3
+info:
+  title: TestingPro Task Manager API
+  version: 1.0.0
+  description: |
+    Local demonstration API for automated API testing. Uses one hardcoded synthetic
+    account and is NOT suitable for production or public deployment.
+servers:
+  - url: http://127.0.0.1:3000
+    description: Local demo only
+tags:
+  - name: System
+  - name: Authentication
+  - name: Tasks
+paths:
+  /health:
+    get:
+      tags: [System]
+      summary: Service health
+      operationId: checkHealth
+      responses:
+        '200':
+          description: Service is responsive
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [status, timestamp]
+                properties:
+                  status: { type: string, example: OK }
+                  timestamp: { type: string, format: date-time }
+  /auth/login:
+    post:
+      tags: [Authentication]
+      summary: Log in with the synthetic test account
+      operationId: login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, password]
+              properties:
+                username: { type: string, example: testuser }
+                password: { type: string, format: password, example: password123 }
+      responses:
+        '200':
+          description: Login succeeded
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  token: { type: string }
+                  expiresIn: { type: string }
+                  user:
+                    type: object
+                    properties:
+                      username: { type: string }
+                      role: { type: string }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /tasks:
+    get:
+      tags: [Tasks]
+      security: [{ bearerAuth: [] }]
+      summary: List tasks
+      operationId: listTasks
+      responses:
+        '200':
+          description: All tasks in the test database
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [count, tasks]
+                properties:
+                  count: { type: integer }
+                  tasks:
+                    type: array
+                    items: { $ref: '#/components/schemas/Task' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+    post:
+      tags: [Tasks]
+      security: [{ bearerAuth: [] }]
+      summary: Create a task
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CreateTask' }
+      responses:
+        '201':
+          description: Task created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TaskResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+  /tasks/{id}:
+    parameters:
+      - in: path
+        name: id
+        required: true
+        schema: { type: integer, minimum: 1 }
+        description: Positive integer task ID
+    get:
+      tags: [Tasks]
+      security: [{ bearerAuth: [] }]
+      summary: Get a task
+      operationId: getTask
+      responses:
+        '200':
+          description: Task found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  task: { $ref: '#/components/schemas/Task' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [Tasks]
+      security: [{ bearerAuth: [] }]
+      summary: Update a task
+      operationId: updateTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/UpdateTask' }
+      responses:
+        '200':
+          description: Task updated
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/TaskResponse' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    delete:
+      tags: [Tasks]
+      security: [{ bearerAuth: [] }]
+      summary: Delete a task
+      operationId: deleteTask
+      responses:
+        '200':
+          description: Task removed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  deletedTask: { $ref: '#/components/schemas/Task' }
+        '400': { $ref: '#/components/responses/BadRequest' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '404': { $ref: '#/components/responses/NotFound' }
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  responses:
+    BadRequest:
+      description: Invalid request
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    Unauthorized:
+      description: Missing or invalid token
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+    NotFound:
+      description: The task does not exist
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/Error' }
+  schemas:
+    Task:
+      type: object
+      required: [id, title, description, status, createdAt]
+      properties:
+        id: { type: integer, minimum: 1 }
+        title: { type: string, minLength: 1, maxLength: 500 }
+        description: { type: string }
+        status: { type: string, enum: [pending, completed] }
+        createdAt: { type: string, description: ISO-like UTC timestamp }
+    CreateTask:
+      type: object
+      required: [title]
+      properties:
+        title: { type: string, minLength: 1, maxLength: 500 }
+        description: { type: string, default: '' }
+        status: { type: string, enum: [pending, completed], default: pending }
+    UpdateTask:
+      type: object
+      properties:
+        title: { type: string, minLength: 1, maxLength: 500 }
+        description: { type: string }
+        status: { type: string, enum: [pending, completed] }
+    TaskResponse:
+      type: object
+      properties:
+        message: { type: string }
+        task: { $ref: '#/components/schemas/Task' }
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+        message: { type: string }
+        details:
+          type: array
+          items: { type: string }
