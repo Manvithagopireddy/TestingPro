@@ -1,0 +1,139 @@
+name: Advanced API Quality
+
+on:
+  push:
+    branches: [main, "quality/**"]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  playwright-and-lint:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout source
+        uses: actions/checkout@v4
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install locked application dependencies
+        run: npm ci
+      - name: Install pinned optional QA tooling
+        run: npm install --no-save --package-lock=false @playwright/test@1.65.1 eslint@10.15.0 prettier@3.6.2
+      - name: Run ESLint quality rules
+        run: npx eslint src tests/playwright
+      - name: Validate formatting configuration
+        run: npx prettier --check .prettierrc.json
+      - name: Seed synthetic database
+        run: npm run seed
+      - name: Start local API
+        run: |
+          node src/server.js > /tmp/testingpro-api.log 2>&1 &
+          echo "SERVER_PID=$!" >> "$GITHUB_ENV"
+      - name: Wait for local API readiness
+        run: |
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3000/health > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/testingpro-api.log
+          exit 1
+      - name: Generate actual Jest coverage report
+        run: npm run test:coverage
+      - name: Run Playwright HTTP API tests
+        run: npx playwright test --config=playwright.config.cjs
+      - name: Install Chromium for report screenshots
+        run: npx playwright install --with-deps chromium
+      - name: Screenshot actual generated HTML reports
+        run: node scripts/capture-report-screenshots.js
+      - name: Upload verified report screenshots
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: real-ci-report-screenshots
+          path: reports/screenshots/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Upload Playwright report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-api-report
+          path: reports/playwright-html/
+          if-no-files-found: warn
+          retention-days: 30
+      - name: Stop local API
+        if: always()
+        run: |
+          if [ -n "${SERVER_PID:-}" ]; then kill "$SERVER_PID" || true; fi
+
+  k6-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Install k6
+        uses: grafana/setup-k6-action@v1
+      - name: Start local test API
+        run: |
+          mkdir -p reports
+          node src/server.js > /tmp/testingpro-k6-api.log 2>&1 &
+          echo "SERVER_PID=$!" >> "$GITHUB_ENV"
+      - name: Wait for API
+        run: |
+          for i in $(seq 1 30); do
+            if curl --fail --silent http://127.0.0.1:3000/health > /dev/null; then exit 0; fi
+            sleep 1
+          done
+          cat /tmp/testingpro-k6-api.log
+          exit 1
+      - name: Run local k6 smoke test
+        run: k6 run --summary-export=reports/k6-summary.json performance/smoke.js
+      - name: Upload measured k6 results
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: k6-smoke-results
+          path: reports/k6-summary.json
+          if-no-files-found: warn
+      - name: Stop local API
+        if: always()
+        run: |
+          if [ -n "${SERVER_PID:-}" ]; then kill "$SERVER_PID" || true; fi
+
+  docker-and-contract:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v4
+      - name: Validate OpenAPI contract
+        run: npx --yes @apidevtools/swagger-cli@4.0.4 validate docs/openapi.yaml
+      - name: Build local-only Docker demo image
+        run: docker build -t testingpro:ci .
+      - name: Verify container health through loopback
+        run: |
+          docker run -d --name testingpro-verification -p 127.0.0.1:3007:3000 testingpro:ci
+          for i in $(seq 1 30); do
+            if curl --silent --fail http://127.0.0.1:3007/health > /dev/null; then
+              echo "Container API healthy"
+              exit 0
+            fi
+            sleep 1
+          done
+          docker logs testingpro-verification
+          exit 1
+      - name: Clean up verification container
+        if: always()
+        run: docker rm -f testingpro-verification || true
