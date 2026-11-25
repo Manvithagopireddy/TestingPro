@@ -12,15 +12,15 @@ The existing CI runs Jest, Cucumber, Newman and SQLite validation.
 
 ## Optional Playwright API tests
 
-These tests use the **APIRequestContext only**, so no browser binaries are needed. The extended CI workflow installs a fixed Playwright test version temporarily without changing the production dependency lock file.
+These tests use the **APIRequestContext only**, so no browser binaries are needed. Playwright is installed reproducibly from the committed lockfile; no browser binaries are needed for API-only tests.
 
 ```bash
 npm ci
-npm install --no-save --package-lock=false @playwright/test@1.65.1
+# Playwright is included in the lockfile
 npm run seed
 npm start
 # New terminal
-npx playwright test --config=playwright.config.cjs
+npm run test:playwright
 ```
 
 ## k6 smoke load testing
@@ -37,9 +37,10 @@ The smoke test uses two virtual users for ten seconds and should **not** be inte
 
 ```bash
 npm ci
-npm install --no-save --package-lock=false eslint@10.15.0 prettier@3.6.2
-npx eslint src tests/playwright
-npx prettier --check .
+# ESLint and Prettier are installed by npm ci
+npm run lint
+npm run format:check
+# For full-repository formatting (not yet a required CI gate): npx prettier --check .
 # To format edited files:
 npx prettier --write path/to/file.js
 ```
