@@ -1,6 +1,9 @@
 'use strict';
 
-// Centralised configuration — change these for your environment
+// This application is a local test fixture, not a production authentication service.
+if (process.env.NODE_ENV === 'production') {
+  throw new Error('TestingPro is a demo API and must not run in production mode.');
+}
 const JWT_SECRET = process.env.JWT_SECRET || 'super-secret-jwt-key-for-portfolio-demo';
 const JWT_EXPIRY = process.env.JWT_EXPIRY || '24h';
 const PORT = process.env.PORT || 3000;
